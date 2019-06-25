@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Date;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -23,21 +24,28 @@ import br.ce.wcaquino.entidades.exceptions.LocadoraException;
 
 public class LocacaoServiceTest {
 
+	private LocacaoService service;
+	public int cont;
+	
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 
+	@Before
+	public void setup() {
+		service = new LocacaoService();
+	}
+
+
 	@Test
 	public void testeLocacao() throws Exception {
-		// cenario
-		LocacaoService locacaoService = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 1, 5.00);
 
 		// acao
-		Locacao locacao = locacaoService.alugarFilme(usuario, filme);
+		Locacao locacao = service.alugarFilme(usuario, filme);
 
 		// verificacao
 		error.checkThat(locacao.getValor(), is(equalTo(5.00)));
@@ -50,19 +58,17 @@ public class LocacaoServiceTest {
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void testeLocacaoFilmeSemEstoque() throws Exception {
 		// cenario
-		LocacaoService locacaoService = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.00);
 
 		// acao
-		locacaoService.alugarFilme(usuario, filme);
+		service.alugarFilme(usuario, filme);
 
 	}
 
 	@Test
 	public void testeLocacaoUsuarioVazio() throws FilmeSemEstoqueException {
 		// cenario
-		LocacaoService service = new LocacaoService();
 		Filme filme = new Filme("Filme 2", 1, 4.0);
 
 		// acao
@@ -78,13 +84,12 @@ public class LocacaoServiceTest {
 	@Test
 	public void testLocacaoFilmeVazio() throws FilmeSemEstoqueException, LocadoraException {
 		// cenario
-		LocacaoService locacaoService = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
 
 		exception.expect(LocadoraException.class);
 		exception.expectMessage("Filme vazio");
 		// acao
-		locacaoService.alugarFilme(usuario, null);
+		service.alugarFilme(usuario, null);
 	}
 
 }
